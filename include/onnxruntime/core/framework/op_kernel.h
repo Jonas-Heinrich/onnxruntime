@@ -43,9 +43,9 @@ class OpKernel {
     return op_kernel_info_.GetKernelDef();
   }
 
-  virtual Status Compute(OpKernelContext* context) const ORT_MUST_USE_RESULT = 0;
+  virtual Status Compute(_Inout_ OpKernelContext* context) const ORT_MUST_USE_RESULT = 0;
 
-  virtual Status ComputeAsync(OpKernelContext*, DoneCallback) const ORT_MUST_USE_RESULT {
+  virtual Status ComputeAsync(_Inout_ OpKernelContext*, DoneCallback) const ORT_MUST_USE_RESULT {
     ORT_NOT_IMPLEMENTED(__FUNCTION__, " is not implemented");
   }
 
@@ -64,10 +64,10 @@ class OpKernelContext {
  public:
   using ArgMap = std::unordered_map<std::string, size_t>;
 
-  explicit OpKernelContext(IExecutionFrame* frame,
-                           const OpKernel* kernel,
-                           concurrency::ThreadPool* threadpool,
-                           const logging::Logger& logger);
+  explicit OpKernelContext(_Inout_ IExecutionFrame* frame,
+                           _In_ const OpKernel* kernel,
+                           _In_opt_ concurrency::ThreadPool* threadpool,
+                           _In_ const logging::Logger& logger);
 
   virtual ~OpKernelContext() = default;
 
@@ -193,10 +193,10 @@ class OpKernelContext {
   int GetImplicitInputArgIndex(int index) const;
   int GetOutputArgIndex(int index) const;
 
-  IExecutionFrame* execution_frame_{nullptr};
-  const OpKernel* kernel_{nullptr};
-  concurrency::ThreadPool* threadpool_{nullptr};
-  const logging::Logger* logger_{nullptr};
+  IExecutionFrame* const execution_frame_{nullptr};
+  const OpKernel* const kernel_{nullptr};
+  concurrency::ThreadPool* const threadpool_{nullptr};
+  const logging::Logger* const logger_{nullptr};
 
   // The argument starting index in ExecutionFrame.
   int node_input_start_index_{-1};
